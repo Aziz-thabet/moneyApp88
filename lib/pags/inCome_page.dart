@@ -7,7 +7,6 @@ import 'package:many/components/build_Text_Field.dart';
 import 'package:many/components/totalAmount.dart';
 import 'package:many/models/TransactionModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../components/Custom_FloatingAction_Button.dart';
 
 class IncomePage extends StatefulWidget {
@@ -112,6 +111,7 @@ class _IncomePageState extends State<IncomePage> {
             TransactionList(
               _transactions,
               scrollController: _scrollController,
+              CircleAvatarColor:const Color(0xff48c659) ,
             ),
           ],
         ),

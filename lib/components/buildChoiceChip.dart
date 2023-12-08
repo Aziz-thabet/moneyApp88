@@ -6,7 +6,7 @@
 //   String label,
 //   String chipType,
 //   Color color,
-//   VoidCallback onSelected,
+//     ValueChanged<bool> onSelected
 // ) {
 //   String type = 'income';
 //   return Container(
@@ -24,9 +24,7 @@
 //       selectedColor: color,
 //       selected: type == chipType,
 //       showCheckmark: false,
-//       onSelected: (_) {
-//         onSelected(); // استدعاء الدالة المستلمة عند الضغط على ChoiceChip
-//       },
+//   onSelected: onSelected, // استدعاء الدالة المستلمة عند الضغط على ChoiceChip
 //     ),
 //   );
 // }

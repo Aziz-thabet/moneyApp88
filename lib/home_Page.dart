@@ -68,7 +68,7 @@ class homePage extends StatelessWidget {
             ),
           ),
           const Text(
-            'الحد الاقصي للصرف هذا اليوم ',
+            'الاموال المتاحة ',
             style: TextStyle(fontSize: 30),
           ),
           const SizedBox(
@@ -86,13 +86,14 @@ class homePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(25),
                   ),
                   child: const Center(
-                      child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      '125',
-                      style: TextStyle(fontSize: 120),
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        '1225',
+                        style: TextStyle(fontSize: 120),
+                      ),
                     ),
-                  )),
+                  ),
                 ),
               ),
             ),

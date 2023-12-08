@@ -90,6 +90,7 @@ class _SavingsPageState extends State<SavingsPage> {
             TransactionList(
               _transactions,
               scrollController: _scrollController,
+              CircleAvatarColor: const Color(0xffff5500),
             ),
           ],
         ),

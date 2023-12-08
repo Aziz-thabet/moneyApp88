@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages, library_private_types_in_public_api
+// ignore_for_file: depend_on_referenced_packages, library_private_types_in_public_api, file_names
 
 import 'package:flutter/material.dart';
 
@@ -97,6 +97,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
             TransactionList(
               _transactions,
               scrollController: _scrollController,
+              CircleAvatarColor: Colors.purpleAccent,
             ),
           ],
         ),
