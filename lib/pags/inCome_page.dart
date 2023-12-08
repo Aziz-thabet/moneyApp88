@@ -3,6 +3,7 @@
 import 'dart:convert' show json;
 import 'package:flutter/material.dart';
 import 'package:many/components/Transaction_List.dart';
+import 'package:many/components/build_Text_Field.dart';
 import 'package:many/components/totalAmount.dart';
 import 'package:many/models/TransactionModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -74,15 +75,9 @@ class _IncomePageState extends State<IncomePage> {
               padding: const EdgeInsets.all(15),
               child: Column(
                 children: <Widget>[
-                  TextField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(labelText: 'الاسم'),
-                  ),
-                  TextField(
-                    controller: _amountController,
-                    decoration: const InputDecoration(labelText: 'المبلغ'),
-                    keyboardType: TextInputType.number,
-                  ),
+                  buildTextField('الاسم', _nameController),
+                  buildTextField('المبلغ', _amountController,
+                      keyboardType: TextInputType.number),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(

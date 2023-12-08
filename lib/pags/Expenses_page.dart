@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 
 import 'package:many/components/Custom_FloatingAction_Button.dart';
 import 'package:many/components/Transaction_List.dart';
+import 'package:many/components/build_Text_Field.dart';
 import 'package:many/components/totalAmount.dart';
 import 'package:many/models/TransactionModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' show json;
-
 
 class ExpensesPage extends StatefulWidget {
   const ExpensesPage({Key? key}) : super(key: key);
@@ -70,10 +70,10 @@ class _ExpensesPageState extends State<ExpensesPage> {
               padding: const EdgeInsets.all(15),
               child: Column(
                 children: <Widget>[
-                  _buildTextField('الاسم', _nameController),
-                  _buildTextField('المبلغ', _amountController,
+                  buildTextField('الاسم', _nameController),
+                  buildTextField('المبلغ', _amountController,
                       keyboardType: TextInputType.number),
-                  _buildChoiceChips(),
+                  buildChoiceChipList(),
                   ElevatedButton(
                     onPressed: () {
                       String name = _nameController.text;
@@ -104,31 +104,22 @@ class _ExpensesPageState extends State<ExpensesPage> {
     );
   }
 
-  Widget _buildTextField(String labelText, TextEditingController controller,
-      {TextInputType? keyboardType}) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(labelText: labelText),
-      keyboardType: keyboardType,
-    );
-  }
-
-  Widget _buildChoiceChips() {
+  Widget buildChoiceChipList() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
-          Expanded(child: _buildChoiceChip('ترفيهية', 'ترفيهية')),
+          Expanded(child: buildChoiceChip('ترفيهية', 'ترفيهية',Colors.purpleAccent)),
           const SizedBox(width: 10.0),
-          Expanded(child: _buildChoiceChip('اساسية', ' اساسية')),
+          Expanded(child: buildChoiceChip('اساسية', ' اساسية',Colors.purpleAccent)),
           const SizedBox(width: 10),
-          Expanded(child: _buildChoiceChip('التزامات', 'التزامات')),
+          Expanded(child: buildChoiceChip('التزامات', 'التزامات',Colors.purpleAccent)),
         ],
       ),
     );
   }
 
-  Widget _buildChoiceChip(String label, String chipType) {
+  Widget buildChoiceChip(String label, String chipType,Color color) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),

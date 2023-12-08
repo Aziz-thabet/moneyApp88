@@ -1,12 +1,13 @@
 // ignore_for_file: library_private_types_in_public_api, depend_on_referenced_packages, file_names
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:many/components/Custom_FloatingAction_Button.dart';
+import 'package:many/components/Transaction_List.dart';
+import 'package:many/components/build_Text_Field.dart';
 import 'package:many/components/totalAmount.dart';
+import 'package:many/models/TransactionModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' show json;
-
 class SavingsPage extends StatefulWidget {
   const SavingsPage({Key? key}) : super(key: key);
 
@@ -18,6 +19,7 @@ class _SavingsPageState extends State<SavingsPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final List<Transaction> _transactions = [];
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -64,15 +66,9 @@ class _SavingsPageState extends State<SavingsPage> {
               padding: const EdgeInsets.all(15),
               child: Column(
                 children: <Widget>[
-                  TextField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(labelText: 'الاسم'),
-                  ),
-                  TextField(
-                    controller: _amountController,
-                    decoration: const InputDecoration(labelText: 'المبلغ'),
-                    keyboardType: TextInputType.number,
-                  ),
+                  buildTextField('الاسم', _nameController),
+                  buildTextField('المبلغ', _amountController,
+                      keyboardType: TextInputType.number),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
@@ -91,7 +87,10 @@ class _SavingsPageState extends State<SavingsPage> {
                 ],
               ),
             ),
-            TransactionList(_transactions),
+            TransactionList(
+              _transactions,
+              scrollController: _scrollController,
+            ),
           ],
         ),
       ),
@@ -127,80 +126,5 @@ class _SavingsPageState extends State<SavingsPage> {
         _transactions.addAll(transactions);
       });
     }
-  }
-}
-
-class Transaction {
-  final String name;
-  final double amount;
-  final DateTime date;
-
-  Transaction({required this.name, required this.amount, required this.date});
-}
-
-class TransactionList extends StatelessWidget {
-  final List<Transaction> transactions;
-
-  const TransactionList(this.transactions, {Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        transactions.isEmpty
-            ? const Center(
-                child: Text(
-                  'ليس هناك عمليات حتى الآن.',
-                  style: TextStyle(fontSize: 25),
-                ),
-              )
-            : ListView.builder(
-                shrinkWrap: true,
-                itemCount: transactions.length,
-                itemBuilder: (ctx, index) {
-                  return Card(
-                    elevation: 5,
-                    margin: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 5,
-                    ),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        radius: 30,
-                        child: Padding(
-                          padding: const EdgeInsets.all(6),
-                          child: FittedBox(
-                            child: Text('${transactions[index].amount}'),
-                          ),
-                        ),
-                      ),
-                      title: Text(
-                        transactions[index].name,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            DateFormat.yMMMd().format(transactions[index].date),
-                          ),
-                          const Text(
-                            'التفاصيل الإضافية هنا',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-      ],
-    );
   }
 }
