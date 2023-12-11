@@ -3,6 +3,12 @@ class Transaction {
   final String name;
   final double amount;
   final DateTime date;
+  String? type;
 
-  Transaction({required this.name, required this.amount, required this.date});
+  Transaction({
+    required this.name,
+    required this.amount,
+    required this.date,
+    this.type,
+  });
 }

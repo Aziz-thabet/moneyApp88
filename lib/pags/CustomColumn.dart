@@ -66,17 +66,25 @@ class CustomColumn extends StatelessWidget {
                                 DateFormat.yMMMd()
                                     .format(transactions[index].date),
                               ),
+                              Text(
+                                transactions[index].type != null
+                                    ? transactions[index].type!
+                                    : 'نوع غير محدد',
+                              ),
                             ],
                           ),
                           const Spacer(
                             flex: 1,
                           ),
                           IconButton(
-                              onPressed: () { onDelete(index);},
-                              icon: const Icon(
-                                Icons.delete,
-                                size: 35,
-                              ))
+                            onPressed: () {
+                              onDelete(index);
+                            },
+                            icon: const Icon(
+                              Icons.delete,
+                              size: 35,
+                            ),
+                          ),
                         ],
                       ),
                     ),

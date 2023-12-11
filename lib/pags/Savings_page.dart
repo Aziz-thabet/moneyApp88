@@ -38,14 +38,10 @@ class _SavingsPageState extends State<SavingsPage> {
     });
   }
 
-  double _getTotalAmount() {
-    double total = 0.0;
-    for (var transaction in _transactions) {
-      total += transaction.amount;
-    }
-    return total;
+   double getTotalAmountOfSaving(List<Transaction> transactions) {
+    return transactions.fold(
+        0.0, (total, transaction) => total + transaction.amount);
   }
-
   void _deleteTransaction(int index) {
     setState(() {
       _transactions.removeAt(index);
@@ -67,7 +63,7 @@ class _SavingsPageState extends State<SavingsPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             TotalAmountWidget(
-              _getTotalAmount(),
+              getTotalAmountOfSaving(_transactions),
               color: Colors.deepOrange.shade300,
             ),
             Container(

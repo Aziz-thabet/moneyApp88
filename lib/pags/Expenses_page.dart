@@ -29,12 +29,13 @@ class _ExpensesPageState extends State<ExpensesPage> {
     _loadTransactions();
   }
 
-  void _addTransaction(String name, double amount) {
+  void _addTransaction(String name, double amount, String type) {
     setState(() {
       _transactions.add(Transaction(
         name: name,
         amount: amount,
         date: DateTime.now(),
+        type: type,
       ));
       _nameController.clear();
       _amountController.clear();
@@ -42,17 +43,19 @@ class _ExpensesPageState extends State<ExpensesPage> {
     });
   }
 
-  double _getTotalAmount() {
-    return _transactions.fold(
-        0.0, (sum, transaction) => sum + transaction.amount);
+  double getTotalAmountOfExpenses(List<Transaction> transactions) {
+    return transactions.fold(
+        0.0, (total, transaction) => total + transaction.amount);
   }
+
   void _deleteTransaction(int index) {
     setState(() {
       _transactions.removeAt(index);
       _saveTransactions();
     });
   }
-  String type = 'income';
+
+  String type = 'نوع غير محدد';
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +71,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             TotalAmountWidget(
-              _getTotalAmount(),
+              getTotalAmountOfExpenses(_transactions),
               color: Colors.purpleAccent,
             ),
             Container(
@@ -85,7 +88,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                       double amount =
                           double.tryParse(_amountController.text) ?? 0.0;
                       if (name.isNotEmpty && amount > 0) {
-                        _addTransaction(name, amount);
+                        _addTransaction(name, amount, type);
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -103,7 +106,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
               _transactions,
               scrollController: _scrollController,
               CircleAvatarColor: Colors.purpleAccent,
-              onDelete:_deleteTransaction,
+              onDelete: _deleteTransaction,
             ),
           ],
         ),
@@ -162,6 +165,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
               'name': t.name,
               'amount': t.amount,
               'date': t.date.toIso8601String(),
+              'type' : t.type
             })
         .toList();
     prefs.setStringList(
@@ -176,10 +180,10 @@ class _ExpensesPageState extends State<ExpensesPage> {
     if (transactionsData != null) {
       final transactions = transactionsData
           .map((t) => Transaction(
-                name: json.decode(t)['name'],
-                amount: json.decode(t)['amount'],
-                date: DateTime.parse(json.decode(t)['date']),
-              ))
+              name: json.decode(t)['name'],
+              amount: json.decode(t)['amount'],
+              date: DateTime.parse(json.decode(t)['date']),
+              type: 'type'))
           .toList();
       setState(() {
         _transactions.addAll(transactions);

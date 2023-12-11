@@ -1,5 +1,4 @@
 // ignore_for_file: depend_on_referenced_packages, library_private_types_in_public_api, file_names
-
 import 'dart:convert' show json;
 import 'package:flutter/material.dart';
 import 'package:many/components/Transaction_List.dart';
@@ -34,12 +33,13 @@ class _IncomePageState extends State<IncomePage> {
     super.dispose();
   }
 
-  void _addTransaction(String name, double amount) {
+  void _addTransaction(String name, double amount, String type) {
     setState(() {
       _transactions.add(Transaction(
         name: name,
         amount: amount,
         date: DateTime.now(),
+        type: type,
       ));
       _nameController.clear();
       _amountController.clear();
@@ -47,17 +47,19 @@ class _IncomePageState extends State<IncomePage> {
     });
   }
 
-  double _getTotalAmount() {
-    return _transactions.fold(
+  double getTotalAmountOfInCome(List<Transaction> transactions) {
+    return transactions.fold(
         0.0, (total, transaction) => total + transaction.amount);
   }
+
   void _deleteTransaction(int index) {
     setState(() {
       _transactions.removeAt(index);
       _saveTransactions();
     });
   }
-  String type = 'income';
+
+  String type = 'نوع غير محدد';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +74,7 @@ class _IncomePageState extends State<IncomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             TotalAmountWidget(
-              _getTotalAmount(),
+              getTotalAmountOfInCome(_transactions),
               color: Colors.greenAccent,
             ),
             Container(
@@ -97,7 +99,7 @@ class _IncomePageState extends State<IncomePage> {
                       String name = _nameController.text;
                       double amount = double.parse(_amountController.text);
                       if (name.isNotEmpty && amount > 0) {
-                        _addTransaction(name, amount);
+                        _addTransaction(name, amount, type);
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -114,8 +116,8 @@ class _IncomePageState extends State<IncomePage> {
             TransactionList(
               _transactions,
               scrollController: _scrollController,
-              CircleAvatarColor:const Color(0xff48c659),
-              onDelete: _deleteTransaction ,
+              CircleAvatarColor: const Color(0xff48c659),
+              onDelete: _deleteTransaction,
             ),
           ],
         ),
@@ -151,7 +153,6 @@ class _IncomePageState extends State<IncomePage> {
       ),
     );
   }
-
   // دالة لحفظ الصفقات باستخدام Shared Preferences
   Future<void> _saveTransactions() async {
     final prefs = await SharedPreferences.getInstance();
@@ -160,6 +161,7 @@ class _IncomePageState extends State<IncomePage> {
         'name': t.name,
         'amount': t.amount,
         'date': t.date.toIso8601String(),
+        'type': t.type
       };
     }).toList();
     prefs.setStringList(
@@ -177,6 +179,7 @@ class _IncomePageState extends State<IncomePage> {
           name: data['name'],
           amount: data['amount'],
           date: DateTime.parse(data['date']),
+          type: 'type',
         );
       }).toList();
       setState(() {
