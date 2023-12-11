@@ -46,7 +46,12 @@ class _ExpensesPageState extends State<ExpensesPage> {
     return _transactions.fold(
         0.0, (sum, transaction) => sum + transaction.amount);
   }
-
+  void _deleteTransaction(int index) {
+    setState(() {
+      _transactions.removeAt(index);
+      _saveTransactions();
+    });
+  }
   String type = 'income';
 
   @override
@@ -98,6 +103,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
               _transactions,
               scrollController: _scrollController,
               CircleAvatarColor: Colors.purpleAccent,
+              onDelete:_deleteTransaction,
             ),
           ],
         ),
@@ -110,17 +116,19 @@ class _ExpensesPageState extends State<ExpensesPage> {
       padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
-          Expanded(child: buildChoiceChip('ترفيهية', 'ترفيهية',Colors.purpleAccent)),
+          Expanded(
+              child:
+                  buildChoiceChip('ترفيهية', 'ترفيهية', Colors.purpleAccent)),
           const SizedBox(width: 10.0),
-          Expanded(child: buildChoiceChip('اساسية', ' اساسية',Colors.purpleAccent)),
+          Expanded(
+              child: buildChoiceChip('اساسية', ' اساسية', Colors.purpleAccent)),
           const SizedBox(width: 10),
-          Expanded(child: buildChoiceChip('التزامات', 'التزامات',Colors.purpleAccent)),
         ],
       ),
     );
   }
 
-  Widget buildChoiceChip(String label, String chipType,Color color) {
+  Widget buildChoiceChip(String label, String chipType, Color color) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),

@@ -51,7 +51,12 @@ class _IncomePageState extends State<IncomePage> {
     return _transactions.fold(
         0.0, (total, transaction) => total + transaction.amount);
   }
-
+  void _deleteTransaction(int index) {
+    setState(() {
+      _transactions.removeAt(index);
+      _saveTransactions();
+    });
+  }
   String type = 'income';
   @override
   Widget build(BuildContext context) {
@@ -84,8 +89,6 @@ class _IncomePageState extends State<IncomePage> {
                         Expanded(child: buildChoiceChip(' اساسي', ' اساسي')),
                         const SizedBox(width: 10.0),
                         Expanded(child: buildChoiceChip(' اضافي', ' اضافي')),
-                        const SizedBox(width: 10),
-                        Expanded(child: buildChoiceChip('مستحقات', 'مستحقات')),
                       ],
                     ),
                   ),
@@ -111,7 +114,8 @@ class _IncomePageState extends State<IncomePage> {
             TransactionList(
               _transactions,
               scrollController: _scrollController,
-              CircleAvatarColor:const Color(0xff48c659) ,
+              CircleAvatarColor:const Color(0xff48c659),
+              onDelete: _deleteTransaction ,
             ),
           ],
         ),

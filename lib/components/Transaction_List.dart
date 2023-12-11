@@ -8,11 +8,13 @@ class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
   final ScrollController scrollController;
   final Color CircleAvatarColor;
+  final void Function(int) onDelete;
 
   const TransactionList(this.transactions,
       {Key? key,
       required this.scrollController,
-      required this.CircleAvatarColor})
+      required this.CircleAvatarColor,
+        required this.onDelete})
       : super(key: key);
 
   @override
@@ -20,6 +22,7 @@ class TransactionList extends StatelessWidget {
     return CustomColumn(
         transactions: transactions,
         scrollController: scrollController,
-        circleAvatarColor: CircleAvatarColor);
+        circleAvatarColor: CircleAvatarColor,
+      onDelete: onDelete,);
   }
 }

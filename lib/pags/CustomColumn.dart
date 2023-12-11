@@ -10,12 +10,13 @@ class CustomColumn extends StatelessWidget {
     required this.transactions,
     required this.scrollController,
     required this.circleAvatarColor,
+    required this.onDelete,
   });
 
   final List<Transaction> transactions;
   final ScrollController scrollController;
   final Color circleAvatarColor;
-
+  final void Function(int) onDelete;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -71,7 +72,7 @@ class CustomColumn extends StatelessWidget {
                             flex: 1,
                           ),
                           IconButton(
-                              onPressed: () {},
+                              onPressed: () { onDelete(index);},
                               icon: const Icon(
                                 Icons.delete,
                                 size: 35,

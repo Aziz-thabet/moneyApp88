@@ -8,6 +8,7 @@ import 'package:many/components/totalAmount.dart';
 import 'package:many/models/TransactionModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' show json;
+
 class SavingsPage extends StatefulWidget {
   const SavingsPage({Key? key}) : super(key: key);
 
@@ -43,6 +44,13 @@ class _SavingsPageState extends State<SavingsPage> {
       total += transaction.amount;
     }
     return total;
+  }
+
+  void _deleteTransaction(int index) {
+    setState(() {
+      _transactions.removeAt(index);
+      _saveTransactions();
+    });
   }
 
   @override
@@ -81,8 +89,10 @@ class _SavingsPageState extends State<SavingsPage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xffff5500),
                     ),
-                    child: const Text('إضافة',
-                      style: TextStyle(color: Colors.black, fontSize: 25),),
+                    child: const Text(
+                      'إضافة',
+                      style: TextStyle(color: Colors.black, fontSize: 25),
+                    ),
                   ),
                 ],
               ),
@@ -91,6 +101,7 @@ class _SavingsPageState extends State<SavingsPage> {
               _transactions,
               scrollController: _scrollController,
               CircleAvatarColor: const Color(0xffff5500),
+              onDelete: _deleteTransaction,
             ),
           ],
         ),
