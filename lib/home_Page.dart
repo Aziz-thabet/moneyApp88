@@ -16,89 +16,97 @@ class homePage extends StatelessWidget {
         backgroundColor: const Color(0xff00bcd4),
         title: const Text('Money manager'),
       ),
-      body: Column(
-        children: <Widget>[
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: [
-              Category(
-                text: 'الادخار',
-                color: const Color(0xffff2000),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (BuildContext context) {
-                      return const SavingsPage();
-                    }),
-                  );
-                },
-              ),
-              Category(
-                text: 'المصاريف',
-                color: Colors.purple,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (BuildContext context) {
-                      return const ExpensesPage();
-                    }),
-                  );
-                },
-              ),
-              Category(
-                text: 'الدخل',
-                color: const Color(0xff48c658),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (BuildContext context) {
-                      return const IncomePage();
-                    }),
-                  );
-                },
-              ),
-            ],
-          ),
-          Expanded(
-            child: Image.asset(
-              'assets/pngs/klipartz.com.png',
-              width: double.infinity,
+      body:
+      Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(image: 
+          AssetImage('assets/back/spread-us-one-hundred-dollars-bills-background.jpg'),fit: BoxFit.cover,
+          )
+        ),
+        child: Column(
+          children: <Widget>[
+            const SizedBox(
+              height: 10,
             ),
-          ),
-          const Text(
-            'الاموال المتاحة ',
-            style: TextStyle(fontSize: 30),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Expanded(
-                child: Container(
-                  height: 200,
-                  width: 300,
-                  decoration: BoxDecoration(
-                    color: Colors.amber,
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        '1225',
-                        style: TextStyle(fontSize: 120),
+            Row(
+              children: [
+                Category(
+                  text: 'الادخار',
+                  color: const Color(0xffff2000),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (BuildContext context) {
+                        return const SavingsPage();
+                      }),
+                    );
+                  },
+                ),
+                Category(
+                  text: 'المصاريف',
+                  color: Colors.purple,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (BuildContext context) {
+                        return const ExpensesPage();
+                      }),
+                    );
+                  },
+                ),
+                Category(
+                  text: 'الدخل',
+                  color: const Color(0xff48c658),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (BuildContext context) {
+                        return const IncomePage();
+                      }),
+                    );
+                  },
+                ),
+              ],
+            ),
+            Expanded(
+              child: Image.asset(
+                'assets/pngs/klipartz.com.png',
+                width: double.infinity,
+              ),
+            ),
+            const Text(
+              'الاموال المتاحة ',
+              style: TextStyle(fontSize: 30),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Expanded(
+                  child: Container(
+                    height: 200,
+                    width: 300,
+                    decoration: BoxDecoration(
+                      color: Colors.amber,
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    child: const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          '1225',
+                          style: TextStyle(fontSize: 120),
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
