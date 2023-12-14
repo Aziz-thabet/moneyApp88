@@ -5,24 +5,34 @@ import 'package:many/pags/Savings_page.dart';
 import 'package:many/pags/inCome_page.dart';
 import 'components/Category.dart';
 
-class homePage extends StatelessWidget {
+class homePage extends StatefulWidget {
   const homePage({super.key});
 
   @override
+  State<homePage> createState() => _homePageState();
+}
+
+class _homePageState extends State<homePage> {
+  double incomeTotal = 0.0;
+  double expensesTotal = 0.0;
+  double savingsTotal = 0.0;
+
+  @override
   Widget build(BuildContext context) {
+    double total = incomeTotal - expensesTotal - savingsTotal;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: const Color(0xff00bcd4),
         title: const Text('Money manager'),
       ),
-      body:
-      Container(
+      body: Container(
         decoration: const BoxDecoration(
-          image: DecorationImage(image: 
-          AssetImage('assets/back/spread-us-one-hundred-dollars-bills-background.jpg'),fit: BoxFit.cover,
-          )
-        ),
+            image: DecorationImage(
+              image: AssetImage(
+                  'assets/back/spread-us-one-hundred-dollars-bills-background.jpg'),
+              fit: BoxFit.cover,
+            )),
         child: Column(
           children: <Widget>[
             const SizedBox(
@@ -37,7 +47,7 @@ class homePage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (BuildContext context) {
-                        return const SavingsPage();
+                        return  SavingsPage(updateSavingTotal: _updateSavingsTotal);
                       }),
                     );
                   },
@@ -49,7 +59,7 @@ class homePage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (BuildContext context) {
-                        return const ExpensesPage();
+                        return  ExpensesPage(updateExpensesTotal: _updateExpensesTotal);
                       }),
                     );
                   },
@@ -61,7 +71,7 @@ class homePage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (BuildContext context) {
-                        return const IncomePage();
+                        return  IncomePage(updateIncomeTotal: _updateIncomeTotal);
                       }),
                     );
                   },
@@ -76,7 +86,9 @@ class homePage extends StatelessWidget {
             ),
             const Text(
               'الاموال المتاحة ',
-              style: TextStyle(fontSize: 30),
+              style: TextStyle(
+                fontSize: 30,
+              ),
             ),
             const SizedBox(
               height: 20,
@@ -84,21 +96,19 @@ class homePage extends StatelessWidget {
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Expanded(
-                  child: Container(
-                    height: 200,
-                    width: 300,
-                    decoration: BoxDecoration(
-                      color: Colors.amber,
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          '1225',
-                          style: TextStyle(fontSize: 120),
-                        ),
+                child: Container(
+                  height: 200,
+                  width: 300,
+                  decoration: BoxDecoration(
+                    color: Colors.amber,
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child:  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        '$total',
+                        style: const TextStyle(fontSize: 120),
                       ),
                     ),
                   ),
@@ -110,4 +120,26 @@ class homePage extends StatelessWidget {
       ),
     );
   }
+
+  void _updateIncomeTotal(double newTotal) {
+    // تحديث قيمة الدخل في صفحة الرئيسية
+    setState(() {
+      incomeTotal = newTotal;
+    });
+  }
+
+  void _updateExpensesTotal(double newTotal) {
+    // تحديث قيمة المصروفات في صفحة الرئيسية
+    setState(() {
+      expensesTotal = newTotal;
+    });
+  }
+
+  void _updateSavingsTotal(double newTotal) {
+    // تحديث قيمة الادخار في صفحة الرئيسية
+    setState(() {
+      savingsTotal = newTotal;
+    });
+  }
 }
+

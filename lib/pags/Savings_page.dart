@@ -10,17 +10,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' show json;
 
 class SavingsPage extends StatefulWidget {
-  const SavingsPage({Key? key}) : super(key: key);
-
+  const SavingsPage({Key? key, required this.updateSavingTotal}) : super(key: key);
+  final Function(double) updateSavingTotal ;
   @override
-  _SavingsPageState createState() => _SavingsPageState();
+  SavingsPageState createState() => SavingsPageState();
 }
 
-class _SavingsPageState extends State<SavingsPage> {
+class SavingsPageState extends State<SavingsPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final List<Transaction> _transactions = [];
   final ScrollController _scrollController = ScrollController();
+  double savingsTotal = 0.0;
 
   @override
   void initState() {
@@ -28,13 +29,16 @@ class _SavingsPageState extends State<SavingsPage> {
     _loadTransactions();
   }
 
-  void _addTransaction(String name, double amount) {
+  void _addTransaction(String name, double amount) async{
     setState(() {
       _transactions
           .add(Transaction(name: name, amount: amount, date: DateTime.now()));
       _nameController.clear();
       _amountController.clear();
       _saveTransactions();
+      savingsTotal = getTotalAmountOfSaving(_transactions);
+      widget.updateSavingTotal(savingsTotal);
+
     });
   }
 
@@ -131,7 +135,9 @@ class _SavingsPageState extends State<SavingsPage> {
         );
       }).toList();
       setState(() {
+        _transactions.clear(); // يجب مسح القائمة قبل إضافة الصفقات المسترجعة
         _transactions.addAll(transactions);
+        savingsTotal = getTotalAmountOfSaving(_transactions);
       });
     }
   }

@@ -11,17 +11,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' show json;
 
 class ExpensesPage extends StatefulWidget {
-  const ExpensesPage({Key? key}) : super(key: key);
-
+  const ExpensesPage({Key? key, required this.updateExpensesTotal})
+      : super(key: key);
+  final Function(double) updateExpensesTotal;
   @override
-  _ExpensesPageState createState() => _ExpensesPageState();
+  ExpensesPageState createState() => ExpensesPageState();
 }
 
-class _ExpensesPageState extends State<ExpensesPage> {
+class ExpensesPageState extends State<ExpensesPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final List<Transaction> _transactions = [];
   final ScrollController _scrollController = ScrollController();
+  double expensesTotal = 0.0;
 
   @override
   void initState() {
@@ -29,7 +31,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
     _loadTransactions();
   }
 
-  void _addTransaction(String name, double amount, String type) {
+  void _addTransaction(String name, double amount, String type) async {
     setState(() {
       _transactions.add(Transaction(
         name: name,
@@ -40,6 +42,8 @@ class _ExpensesPageState extends State<ExpensesPage> {
       _nameController.clear();
       _amountController.clear();
       _saveTransactions();
+      expensesTotal = getTotalAmountOfExpenses(_transactions);
+      widget.updateExpensesTotal(expensesTotal);
     });
   }
 
@@ -165,7 +169,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
               'name': t.name,
               'amount': t.amount,
               'date': t.date.toIso8601String(),
-              'type' : t.type
+              'type': t.type
             })
         .toList();
     prefs.setStringList(
@@ -186,7 +190,9 @@ class _ExpensesPageState extends State<ExpensesPage> {
               type: 'type'))
           .toList();
       setState(() {
+        _transactions.clear(); // يجب مسح القائمة قبل إضافة الصفقات المسترجعة
         _transactions.addAll(transactions);
+        expensesTotal = getTotalAmountOfExpenses(_transactions);
       });
     }
   }

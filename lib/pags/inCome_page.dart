@@ -9,18 +9,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../components/Custom_FloatingAction_Button.dart';
 
 class IncomePage extends StatefulWidget {
-  const IncomePage({Key? key}) : super(key: key);
+  const IncomePage({Key? key, required this.updateIncomeTotal}) : super(key: key);
+  final Function(double) updateIncomeTotal;
 
   @override
-  _IncomePageState createState() => _IncomePageState();
+  IncomePageState createState() => IncomePageState();
 }
 
-class _IncomePageState extends State<IncomePage> {
+class IncomePageState extends State<IncomePage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final List<Transaction> _transactions = [];
   final ScrollController _scrollController = ScrollController();
-
+  double incomeTotal = 0.0;
   @override
   void initState() {
     super.initState();
@@ -33,7 +34,7 @@ class _IncomePageState extends State<IncomePage> {
     super.dispose();
   }
 
-  void _addTransaction(String name, double amount, String type) {
+  void _addTransaction(String name, double amount, String type) async{
     setState(() {
       _transactions.add(Transaction(
         name: name,
@@ -44,6 +45,8 @@ class _IncomePageState extends State<IncomePage> {
       _nameController.clear();
       _amountController.clear();
       _saveTransactions();
+      incomeTotal = getTotalAmountOfInCome(_transactions);
+      widget.updateIncomeTotal(incomeTotal);
     });
   }
 
@@ -183,7 +186,10 @@ class _IncomePageState extends State<IncomePage> {
         );
       }).toList();
       setState(() {
+        _transactions.clear(); // يجب مسح القائمة قبل إضافة الصفقات المسترجعة
         _transactions.addAll(transactions);
+        incomeTotal = getTotalAmountOfInCome(_transactions);
+        widget.updateIncomeTotal(incomeTotal);
       });
     }
   }
