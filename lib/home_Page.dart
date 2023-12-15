@@ -4,6 +4,7 @@ import 'package:many/pags/Expenses_page.dart';
 import 'package:many/pags/Savings_page.dart';
 import 'package:many/pags/inCome_page.dart';
 import 'components/Category.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class homePage extends StatefulWidget {
   const homePage({super.key});
@@ -15,7 +16,8 @@ class homePage extends StatefulWidget {
 class _homePageState extends State<homePage> {
   double incomeTotal = 0.0;
   double expensesTotal = 0.0;
-  double savingsTotal = 0.0;
+  double savingsTotal = 0.0 ;
+  late SharedPreferences prefs;
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +31,10 @@ class _homePageState extends State<homePage> {
       body: Container(
         decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(
-                  'assets/back/spread-us-one-hundred-dollars-bills-background.jpg'),
-              fit: BoxFit.cover,
-            )),
+          image: AssetImage(
+              'assets/back/spread-us-one-hundred-dollars-bills-background.jpg'),
+          fit: BoxFit.cover,
+        )),
         child: Column(
           children: <Widget>[
             const SizedBox(
@@ -47,7 +49,8 @@ class _homePageState extends State<homePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (BuildContext context) {
-                        return  SavingsPage(updateSavingTotal: _updateSavingsTotal);
+                        return SavingsPage(
+                            updateSavingTotal: _updateSavingsTotal);
                       }),
                     );
                   },
@@ -59,7 +62,8 @@ class _homePageState extends State<homePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (BuildContext context) {
-                        return  ExpensesPage(updateExpensesTotal: _updateExpensesTotal);
+                        return ExpensesPage(
+                            updateExpensesTotal: _updateExpensesTotal);
                       }),
                     );
                   },
@@ -71,7 +75,8 @@ class _homePageState extends State<homePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (BuildContext context) {
-                        return  IncomePage(updateIncomeTotal: _updateIncomeTotal);
+                        return IncomePage(
+                            updateIncomeTotal: _updateIncomeTotal);
                       }),
                     );
                   },
@@ -97,18 +102,19 @@ class _homePageState extends State<homePage> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Container(
-                  height: 200,
-                  width: 300,
                   decoration: BoxDecoration(
                     color: Colors.amber,
                     borderRadius: BorderRadius.circular(25),
                   ),
-                  child:  Center(
+                  child: Center(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        '$total',
-                        style: const TextStyle(fontSize: 120),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          '$total',
+                          style: const TextStyle(fontSize: 120),
+                        ),
                       ),
                     ),
                   ),
@@ -121,7 +127,23 @@ class _homePageState extends State<homePage> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _loadTotals();
+  }
+
+  Future<void> _loadTotals() async {
+    prefs = await SharedPreferences.getInstance();
+    setState(() {
+      incomeTotal = prefs.getDouble('incomeTotal') ?? 0.0;
+      expensesTotal = prefs.getDouble('expensesTotal') ?? 0.0;
+      savingsTotal = prefs.getDouble('savingsTotal') ?? 0.0;
+    });
+  }
+
   void _updateIncomeTotal(double newTotal) {
+    print('Income Updated: $newTotal');
     // تحديث قيمة الدخل في صفحة الرئيسية
     setState(() {
       incomeTotal = newTotal;
@@ -129,6 +151,7 @@ class _homePageState extends State<homePage> {
   }
 
   void _updateExpensesTotal(double newTotal) {
+    print('Expenses: $newTotal');
     // تحديث قيمة المصروفات في صفحة الرئيسية
     setState(() {
       expensesTotal = newTotal;
@@ -136,10 +159,10 @@ class _homePageState extends State<homePage> {
   }
 
   void _updateSavingsTotal(double newTotal) {
+    print('Saving Updated: $newTotal');
     // تحديث قيمة الادخار في صفحة الرئيسية
     setState(() {
       savingsTotal = newTotal;
     });
   }
 }
-

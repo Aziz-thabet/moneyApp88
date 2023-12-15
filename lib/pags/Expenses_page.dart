@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages, library_private_types_in_public_api, file_names
+// ignore_for_file: depend_on_referenced_packages, library_private_types_in_public_api, file_names, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
 
@@ -11,19 +11,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' show json;
 
 class ExpensesPage extends StatefulWidget {
-  const ExpensesPage({Key? key, required this.updateExpensesTotal})
-      : super(key: key);
+  const ExpensesPage({super.key, required this.updateExpensesTotal});
   final Function(double) updateExpensesTotal;
   @override
-  ExpensesPageState createState() => ExpensesPageState();
+  _ExpensesPageState createState() => _ExpensesPageState();
 }
 
-class ExpensesPageState extends State<ExpensesPage> {
+class _ExpensesPageState extends State<ExpensesPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final List<Transaction> _transactions = [];
   final ScrollController _scrollController = ScrollController();
   double expensesTotal = 0.0;
+  Color ExpensesColor = Colors.purpleAccent;
 
   @override
   void initState() {
@@ -56,6 +56,8 @@ class ExpensesPageState extends State<ExpensesPage> {
     setState(() {
       _transactions.removeAt(index);
       _saveTransactions();
+      expensesTotal = getTotalAmountOfExpenses(_transactions);
+      widget.updateExpensesTotal(expensesTotal);
     });
   }
 
@@ -76,7 +78,7 @@ class ExpensesPageState extends State<ExpensesPage> {
           children: <Widget>[
             TotalAmountWidget(
               getTotalAmountOfExpenses(_transactions),
-              color: Colors.purpleAccent,
+              color: ExpensesColor,
             ),
             Container(
               padding: const EdgeInsets.all(15),
@@ -109,7 +111,7 @@ class ExpensesPageState extends State<ExpensesPage> {
             TransactionList(
               _transactions,
               scrollController: _scrollController,
-              CircleAvatarColor: Colors.purpleAccent,
+              CircleAvatarColor: ExpensesColor,
               onDelete: _deleteTransaction,
             ),
           ],
@@ -123,12 +125,9 @@ class ExpensesPageState extends State<ExpensesPage> {
       padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
-          Expanded(
-              child:
-                  buildChoiceChip('ترفيهية', 'ترفيهية', Colors.purpleAccent)),
+          Expanded(child: buildChoiceChip('ترفيهية', 'ترفيهية', ExpensesColor)),
           const SizedBox(width: 10.0),
-          Expanded(
-              child: buildChoiceChip('اساسية', ' اساسية', Colors.purpleAccent)),
+          Expanded(child: buildChoiceChip('اساسية', ' اساسية', ExpensesColor)),
           const SizedBox(width: 10),
         ],
       ),
@@ -148,7 +147,7 @@ class ExpensesPageState extends State<ExpensesPage> {
             color: type == chipType ? Colors.black : Colors.black,
           ),
         ),
-        selectedColor: Colors.purpleAccent,
+        selectedColor: ExpensesColor,
         selected: type == chipType,
         showCheckmark: false,
         onSelected: (val) {
@@ -176,6 +175,7 @@ class ExpensesPageState extends State<ExpensesPage> {
       'expenses_transactions',
       transactions.map((t) => json.encode(t)).toList(),
     );
+    prefs.setDouble('expensesTotal', expensesTotal);
   }
 
   Future<void> _loadTransactions() async {
@@ -183,16 +183,20 @@ class ExpensesPageState extends State<ExpensesPage> {
     final transactionsData = prefs.getStringList('expenses_transactions');
     if (transactionsData != null) {
       final transactions = transactionsData
-          .map((t) => Transaction(
+          .map(
+            (t) => Transaction(
               name: json.decode(t)['name'],
               amount: json.decode(t)['amount'],
               date: DateTime.parse(json.decode(t)['date']),
-              type: 'type'))
+              type: json.decode(t)['type'],
+            ),
+          )
           .toList();
       setState(() {
-        _transactions.clear(); // يجب مسح القائمة قبل إضافة الصفقات المسترجعة
+        _transactions.clear();
         _transactions.addAll(transactions);
         expensesTotal = getTotalAmountOfExpenses(_transactions);
+        widget.updateExpensesTotal(expensesTotal);
       });
     }
   }

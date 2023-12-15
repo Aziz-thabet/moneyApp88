@@ -10,13 +10,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' show json;
 
 class SavingsPage extends StatefulWidget {
-  const SavingsPage({Key? key, required this.updateSavingTotal}) : super(key: key);
+  const SavingsPage({super.key, required this.updateSavingTotal});
   final Function(double) updateSavingTotal ;
   @override
-  SavingsPageState createState() => SavingsPageState();
+  _SavingsPageState createState() => _SavingsPageState();
 }
 
-class SavingsPageState extends State<SavingsPage> {
+class _SavingsPageState extends State<SavingsPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final List<Transaction> _transactions = [];
@@ -50,6 +50,8 @@ class SavingsPageState extends State<SavingsPage> {
     setState(() {
       _transactions.removeAt(index);
       _saveTransactions();
+      savingsTotal = getTotalAmountOfSaving(_transactions);
+      widget.updateSavingTotal(savingsTotal);
     });
   }
 
@@ -120,6 +122,7 @@ class SavingsPageState extends State<SavingsPage> {
     }).toList();
     prefs.setStringList('savings_transactions',
         transactions.map((t) => json.encode(t)).toList());
+    prefs.setDouble('savingsTotal', savingsTotal);
   }
 
   Future<void> _loadTransactions() async {
@@ -138,6 +141,7 @@ class SavingsPageState extends State<SavingsPage> {
         _transactions.clear(); // يجب مسح القائمة قبل إضافة الصفقات المسترجعة
         _transactions.addAll(transactions);
         savingsTotal = getTotalAmountOfSaving(_transactions);
+        widget.updateSavingTotal(savingsTotal);
       });
     }
   }

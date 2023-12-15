@@ -9,14 +9,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../components/Custom_FloatingAction_Button.dart';
 
 class IncomePage extends StatefulWidget {
-  const IncomePage({Key? key, required this.updateIncomeTotal}) : super(key: key);
+  const IncomePage({super.key, required this.updateIncomeTotal});
   final Function(double) updateIncomeTotal;
 
   @override
-  IncomePageState createState() => IncomePageState();
+  _IncomePageState createState() => _IncomePageState();
 }
 
-class IncomePageState extends State<IncomePage> {
+class _IncomePageState extends State<IncomePage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final List<Transaction> _transactions = [];
@@ -59,6 +59,8 @@ class IncomePageState extends State<IncomePage> {
     setState(() {
       _transactions.removeAt(index);
       _saveTransactions();
+      incomeTotal = getTotalAmountOfInCome(_transactions);
+      widget.updateIncomeTotal(incomeTotal);
     });
   }
 
@@ -169,6 +171,7 @@ class IncomePageState extends State<IncomePage> {
     }).toList();
     prefs.setStringList(
         'transactions', transactions.map((t) => json.encode(t)).toList());
+    prefs.setDouble('incomeTotal', incomeTotal);
   }
 
   // دالة لاستعادة الصفقات المحفوظة باستخدام Shared Preferences
@@ -182,7 +185,7 @@ class IncomePageState extends State<IncomePage> {
           name: data['name'],
           amount: data['amount'],
           date: DateTime.parse(data['date']),
-          type: 'type',
+          type: data['type'],
         );
       }).toList();
       setState(() {

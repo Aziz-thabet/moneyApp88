@@ -12,10 +12,13 @@ class TotalAmountWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color:color ,
-      padding: const EdgeInsets.only(left: 150),
-      child: Text(
-        'الاجمالي : ${total.toStringAsFixed(2)}',
-        style: const TextStyle(fontSize: 30),
+      padding:  const EdgeInsets.only(left: 150),
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          'الاجمالي : ${total.toStringAsFixed(2)}',
+          style: const TextStyle(fontSize: 30),
+        ),
       ),
     );
   }
