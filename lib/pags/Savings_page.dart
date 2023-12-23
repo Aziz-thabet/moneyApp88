@@ -6,12 +6,13 @@ import 'package:many/components/Transaction_List.dart';
 import 'package:many/components/build_Text_Field.dart';
 import 'package:many/components/totalAmount.dart';
 import 'package:many/models/TransactionModel.dart';
+import 'package:many/pags/EditTransactionPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' show json;
 
 class SavingsPage extends StatefulWidget {
   const SavingsPage({super.key, required this.updateSavingTotal});
-  final Function(double) updateSavingTotal ;
+  final Function(double) updateSavingTotal;
   @override
   _SavingsPageState createState() => _SavingsPageState();
 }
@@ -30,26 +31,26 @@ class _SavingsPageState extends State<SavingsPage> {
     _loadTransactions();
   }
 
-  void _addTransaction(String name, double amount) async{
+  void _addTransaction(String name, double amount) async {
     setState(() {
-      _transactions
-          .add(Transaction(
+      _transactions.add(Transaction(
         name: name,
         amount: amount,
-        date: selectedDate ?? DateTime.now(),));
+        date: selectedDate ?? DateTime.now(),
+      ));
       _nameController.clear();
       _amountController.clear();
       _saveTransactions();
       savingsTotal = getTotalAmountOfSaving(_transactions);
       widget.updateSavingTotal(savingsTotal);
-
     });
   }
 
-   double getTotalAmountOfSaving(List<Transaction> transactions) {
+  double getTotalAmountOfSaving(List<Transaction> transactions) {
     return transactions.fold(
         0.0, (total, transaction) => total + transaction.amount);
   }
+
   void _deleteTransaction(int index) {
     setState(() {
       _transactions.removeAt(index);
@@ -86,8 +87,8 @@ class _SavingsPageState extends State<SavingsPage> {
                   const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: ElevatedButton(
-                      onPressed: () async {
+                    child:InkWell(
+                      onTap: () async {
                         DateTime? pickedDate = await showDatePicker(
                           context: context,
                           initialDate: selectedDate ?? DateTime.now(),
@@ -100,11 +101,21 @@ class _SavingsPageState extends State<SavingsPage> {
                           });
                         }
                       },
-                      child: Text(
-                        selectedDate != null
-                            ? 'تم اختيار التاريخ: ${selectedDate!.toLocal()}'
-                            : 'اختر التاريخ',
-                        style: const TextStyle(color: Colors.black, fontSize: 25),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.date_range_sharp,
+                            color: Colors.black,
+                            size: 45,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            selectedDate != null
+                                ? 'تم اختيار التاريخ: ${selectedDate!.toLocal()}'
+                                : 'اختر التاريخ',
+                            style: const TextStyle(color: Colors.black, fontSize: 25),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -132,6 +143,7 @@ class _SavingsPageState extends State<SavingsPage> {
               scrollController: _scrollController,
               CircleAvatarColor: const Color(0xffff5500),
               onDelete: _deleteTransaction,
+              onEdite: _editTransaction,
             ),
           ],
         ),
@@ -152,6 +164,23 @@ class _SavingsPageState extends State<SavingsPage> {
         transactions.map((t) => json.encode(t)).toList());
     prefs.setDouble('savingsTotal', savingsTotal);
   }
+
+  Future<void> _editTransaction(int index) async {
+    Transaction editedTransaction = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditTransactionPage(
+          transaction: _transactions[index],
+        ),
+      ),
+    );
+    setState(() {
+      _transactions[index] = editedTransaction;
+      _saveTransactions();
+      savingsTotal = getTotalAmountOfSaving(_transactions);
+      widget.updateSavingTotal(savingsTotal);
+    });
+    }
 
   Future<void> _loadTransactions() async {
     final prefs = await SharedPreferences.getInstance();

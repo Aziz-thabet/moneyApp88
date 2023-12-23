@@ -4,9 +4,14 @@ import 'package:flutter/material.dart';
 
 Widget buildTextField(String labelText, TextEditingController controller,
     {TextInputType? keyboardType}) {
-  return TextField(
-    controller: controller,
-    decoration: InputDecoration(labelText: labelText),
-    keyboardType: keyboardType,
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: TextField(
+      controller: controller,
+      decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: labelText),
+      keyboardType: keyboardType,
+    ),
   );
 }

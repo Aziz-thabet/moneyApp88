@@ -9,19 +9,23 @@ class TransactionList extends StatelessWidget {
   final ScrollController scrollController;
   final Color CircleAvatarColor;
   final void Function(int) onDelete;
+  final void Function(int) onEdite;
 
   const TransactionList(this.transactions,
       {super.key,
       required this.scrollController,
       required this.CircleAvatarColor,
-        required this.onDelete});
+      required this.onDelete,
+      required this.onEdite});
 
   @override
   Widget build(BuildContext context) {
     return CustomColumn(
-        transactions: transactions,
-        scrollController: scrollController,
-        circleAvatarColor: CircleAvatarColor,
-      onDelete: onDelete,);
+      transactions: transactions,
+      scrollController: scrollController,
+      circleAvatarColor: CircleAvatarColor,
+      onDelete: onDelete,
+      onEdit: onEdite,
+    );
   }
 }

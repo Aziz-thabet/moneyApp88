@@ -5,6 +5,7 @@ import 'package:many/components/Transaction_List.dart';
 import 'package:many/components/build_Text_Field.dart';
 import 'package:many/components/totalAmount.dart';
 import 'package:many/models/TransactionModel.dart';
+import 'package:many/pags/EditTransactionPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../components/Custom_FloatingAction_Button.dart';
 
@@ -35,7 +36,7 @@ class _IncomePageState extends State<IncomePage> {
     super.dispose();
   }
 
-  void _addTransaction(String name, double amount, String type) async{
+  void _addTransaction(String name, double amount, String type) async {
     setState(() {
       _transactions.add(Transaction(
         name: name,
@@ -99,10 +100,11 @@ class _IncomePageState extends State<IncomePage> {
                         Expanded(child: buildChoiceChip(' اضافي', ' اضافي')),
                       ],
                     ),
-                  ),Padding(
+                  ),
+                  Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: ElevatedButton(
-                      onPressed: () async {
+                    child: InkWell(
+                      onTap: () async {
                         DateTime? pickedDate = await showDatePicker(
                           context: context,
                           initialDate: selectedDate ?? DateTime.now(),
@@ -115,11 +117,22 @@ class _IncomePageState extends State<IncomePage> {
                           });
                         }
                       },
-                      child: Text(
-                        selectedDate != null
-                            ? 'تم اختيار التاريخ: ${selectedDate!.toLocal()}'
-                            : 'اختر التاريخ',
-                        style: const TextStyle(color: Colors.black, fontSize: 25),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.date_range_sharp,
+                            color: Colors.black,
+                            size: 45,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            selectedDate != null
+                                ? 'تم اختيار التاريخ: ${selectedDate!.toLocal()}'
+                                : 'اختر التاريخ',
+                            style: const TextStyle(
+                                color: Colors.black, fontSize: 25),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -139,7 +152,6 @@ class _IncomePageState extends State<IncomePage> {
                       style: TextStyle(color: Colors.black, fontSize: 25),
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -148,6 +160,7 @@ class _IncomePageState extends State<IncomePage> {
               scrollController: _scrollController,
               CircleAvatarColor: const Color(0xff48c659),
               onDelete: _deleteTransaction,
+              onEdite: _editTransaction,
             ),
           ],
         ),
@@ -183,6 +196,7 @@ class _IncomePageState extends State<IncomePage> {
       ),
     );
   }
+
   // دالة لحفظ الصفقات باستخدام Shared Preferences
   Future<void> _saveTransactions() async {
     final prefs = await SharedPreferences.getInstance();
@@ -197,6 +211,23 @@ class _IncomePageState extends State<IncomePage> {
     prefs.setStringList(
         'transactions', transactions.map((t) => json.encode(t)).toList());
     prefs.setDouble('incomeTotal', incomeTotal);
+  }
+
+  Future<void> _editTransaction(int index) async {
+    Transaction editedTransaction = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditTransactionPage(
+          transaction: _transactions[index],
+        ),
+      ),
+    );
+    setState(() {
+      _transactions[index] = editedTransaction;
+      _saveTransactions();
+      incomeTotal = getTotalAmountOfInCome(_transactions);
+      widget.updateIncomeTotal(incomeTotal);
+    });
   }
 
   // دالة لاستعادة الصفقات المحفوظة باستخدام Shared Preferences

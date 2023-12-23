@@ -10,6 +10,8 @@ import 'package:many/models/TransactionModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' show json;
 
+import 'EditTransactionPage.dart';
+
 class ExpensesPage extends StatefulWidget {
   const ExpensesPage({super.key, required this.updateExpensesTotal});
   final Function(double) updateExpensesTotal;
@@ -91,8 +93,8 @@ class _ExpensesPageState extends State<ExpensesPage> {
                   buildChoiceChipList(),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: ElevatedButton(
-                      onPressed: () async {
+                    child:InkWell(
+                      onTap: () async {
                         DateTime? pickedDate = await showDatePicker(
                           context: context,
                           initialDate: selectedDate ?? DateTime.now(),
@@ -105,11 +107,21 @@ class _ExpensesPageState extends State<ExpensesPage> {
                           });
                         }
                       },
-                      child: Text(
-                        selectedDate != null
-                            ? 'تم اختيار التاريخ: ${selectedDate!.toLocal()}'
-                            : 'اختر التاريخ',
-                        style: const TextStyle(color: Colors.black, fontSize: 25),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.date_range_sharp,
+                            color: Colors.black,
+                            size: 45,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            selectedDate != null
+                                ? 'تم اختيار التاريخ: ${selectedDate!.toLocal()}'
+                                : 'اختر التاريخ',
+                            style: const TextStyle(color: Colors.black, fontSize: 25),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -138,6 +150,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
               scrollController: _scrollController,
               CircleAvatarColor: ExpensesColor,
               onDelete: _deleteTransaction,
+              onEdite: _editTransaction,
             ),
           ],
         ),
@@ -202,7 +215,22 @@ class _ExpensesPageState extends State<ExpensesPage> {
     );
     prefs.setDouble('expensesTotal', expensesTotal);
   }
-
+  Future<void> _editTransaction(int index) async {
+    Transaction editedTransaction = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditTransactionPage(
+          transaction: _transactions[index],
+        ),
+      ),
+    );
+    setState(() {
+      _transactions[index] = editedTransaction;
+      _saveTransactions();
+      expensesTotal = getTotalAmountOfExpenses(_transactions);
+      widget.updateExpensesTotal(expensesTotal);
+    });
+    }
   Future<void> _loadTransactions() async {
     final prefs = await SharedPreferences.getInstance();
     final transactionsData = prefs.getStringList('expenses_transactions');
