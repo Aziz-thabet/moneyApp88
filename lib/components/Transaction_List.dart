@@ -11,11 +11,10 @@ class TransactionList extends StatelessWidget {
   final void Function(int) onDelete;
 
   const TransactionList(this.transactions,
-      {Key? key,
+      {super.key,
       required this.scrollController,
       required this.CircleAvatarColor,
-        required this.onDelete})
-      : super(key: key);
+        required this.onDelete});
 
   @override
   Widget build(BuildContext context) {

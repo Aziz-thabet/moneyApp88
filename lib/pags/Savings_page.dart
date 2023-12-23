@@ -22,6 +22,7 @@ class _SavingsPageState extends State<SavingsPage> {
   final List<Transaction> _transactions = [];
   final ScrollController _scrollController = ScrollController();
   double savingsTotal = 0.0;
+  DateTime? selectedDate;
 
   @override
   void initState() {
@@ -32,7 +33,10 @@ class _SavingsPageState extends State<SavingsPage> {
   void _addTransaction(String name, double amount) async{
     setState(() {
       _transactions
-          .add(Transaction(name: name, amount: amount, date: DateTime.now()));
+          .add(Transaction(
+        name: name,
+        amount: amount,
+        date: selectedDate ?? DateTime.now(),));
       _nameController.clear();
       _amountController.clear();
       _saveTransactions();
@@ -80,6 +84,30 @@ class _SavingsPageState extends State<SavingsPage> {
                   buildTextField('المبلغ', _amountController,
                       keyboardType: TextInputType.number),
                   const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: selectedDate ?? DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                        );
+                        if (pickedDate != null && pickedDate != selectedDate) {
+                          setState(() {
+                            selectedDate = pickedDate;
+                          });
+                        }
+                      },
+                      child: Text(
+                        selectedDate != null
+                            ? 'تم اختيار التاريخ: ${selectedDate!.toLocal()}'
+                            : 'اختر التاريخ',
+                        style: const TextStyle(color: Colors.black, fontSize: 25),
+                      ),
+                    ),
+                  ),
                   ElevatedButton(
                     onPressed: () {
                       String name = _nameController.text;

@@ -5,7 +5,6 @@ import 'package:many/pags/Savings_page.dart';
 import 'package:many/pags/inCome_page.dart';
 import 'components/Category.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 class homePage extends StatefulWidget {
   const homePage({super.key});
 
@@ -16,7 +15,7 @@ class homePage extends StatefulWidget {
 class _homePageState extends State<homePage> {
   double incomeTotal = 0.0;
   double expensesTotal = 0.0;
-  double savingsTotal = 0.0 ;
+  double savingsTotal = 0.0;
   late SharedPreferences prefs;
 
   @override
@@ -143,7 +142,6 @@ class _homePageState extends State<homePage> {
   }
 
   void _updateIncomeTotal(double newTotal) {
-    print('Income Updated: $newTotal');
     // تحديث قيمة الدخل في صفحة الرئيسية
     setState(() {
       incomeTotal = newTotal;
@@ -151,7 +149,6 @@ class _homePageState extends State<homePage> {
   }
 
   void _updateExpensesTotal(double newTotal) {
-    print('Expenses: $newTotal');
     // تحديث قيمة المصروفات في صفحة الرئيسية
     setState(() {
       expensesTotal = newTotal;
@@ -159,7 +156,6 @@ class _homePageState extends State<homePage> {
   }
 
   void _updateSavingsTotal(double newTotal) {
-    print('Saving Updated: $newTotal');
     // تحديث قيمة الادخار في صفحة الرئيسية
     setState(() {
       savingsTotal = newTotal;

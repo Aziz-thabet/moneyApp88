@@ -24,6 +24,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
   final ScrollController _scrollController = ScrollController();
   double expensesTotal = 0.0;
   Color ExpensesColor = Colors.purpleAccent;
+  DateTime? selectedDate;
 
   @override
   void initState() {
@@ -36,7 +37,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
       _transactions.add(Transaction(
         name: name,
         amount: amount,
-        date: DateTime.now(),
+        date: selectedDate ?? DateTime.now(),
         type: type,
       ));
       _nameController.clear();
@@ -88,6 +89,30 @@ class _ExpensesPageState extends State<ExpensesPage> {
                   buildTextField('المبلغ', _amountController,
                       keyboardType: TextInputType.number),
                   buildChoiceChipList(),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: selectedDate ?? DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                        );
+                        if (pickedDate != null && pickedDate != selectedDate) {
+                          setState(() {
+                            selectedDate = pickedDate;
+                          });
+                        }
+                      },
+                      child: Text(
+                        selectedDate != null
+                            ? 'تم اختيار التاريخ: ${selectedDate!.toLocal()}'
+                            : 'اختر التاريخ',
+                        style: const TextStyle(color: Colors.black, fontSize: 25),
+                      ),
+                    ),
+                  ),
                   ElevatedButton(
                     onPressed: () {
                       String name = _nameController.text;

@@ -22,6 +22,7 @@ class _IncomePageState extends State<IncomePage> {
   final List<Transaction> _transactions = [];
   final ScrollController _scrollController = ScrollController();
   double incomeTotal = 0.0;
+  DateTime? selectedDate;
   @override
   void initState() {
     super.initState();
@@ -39,7 +40,7 @@ class _IncomePageState extends State<IncomePage> {
       _transactions.add(Transaction(
         name: name,
         amount: amount,
-        date: DateTime.now(),
+        date: selectedDate ?? DateTime.now(),
         type: type,
       ));
       _nameController.clear();
@@ -98,6 +99,29 @@ class _IncomePageState extends State<IncomePage> {
                         Expanded(child: buildChoiceChip(' اضافي', ' اضافي')),
                       ],
                     ),
+                  ),Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: selectedDate ?? DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                        );
+                        if (pickedDate != null && pickedDate != selectedDate) {
+                          setState(() {
+                            selectedDate = pickedDate;
+                          });
+                        }
+                      },
+                      child: Text(
+                        selectedDate != null
+                            ? 'تم اختيار التاريخ: ${selectedDate!.toLocal()}'
+                            : 'اختر التاريخ',
+                        style: const TextStyle(color: Colors.black, fontSize: 25),
+                      ),
+                    ),
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -115,6 +139,7 @@ class _IncomePageState extends State<IncomePage> {
                       style: TextStyle(color: Colors.black, fontSize: 25),
                     ),
                   ),
+
                 ],
               ),
             ),
