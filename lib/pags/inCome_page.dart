@@ -1,6 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages, library_private_types_in_public_api, file_names
 import 'dart:convert' show json;
 import 'package:flutter/material.dart';
+import 'package:many/components/buildDateSelectionWidget.dart';
 import 'package:many/components/Transaction_List.dart';
 import 'package:many/components/build_Text_Field.dart';
 import 'package:many/components/totalAmount.dart';
@@ -8,7 +9,6 @@ import 'package:many/models/TransactionModel.dart';
 import 'package:many/pags/EditTransactionPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../components/Custom_FloatingAction_Button.dart';
-
 class IncomePage extends StatefulWidget {
   const IncomePage({super.key, required this.updateIncomeTotal});
   final Function(double) updateIncomeTotal;
@@ -103,38 +103,12 @@ class _IncomePageState extends State<IncomePage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: InkWell(
-                      onTap: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: selectedDate ?? DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2101),
-                        );
-                        if (pickedDate != null && pickedDate != selectedDate) {
-                          setState(() {
-                            selectedDate = pickedDate;
-                          });
-                        }
-                      },
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.date_range_sharp,
-                            color: Colors.black,
-                            size: 45,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            selectedDate != null
-                                ? 'تم اختيار التاريخ: ${selectedDate!.toLocal()}'
-                                : 'اختر التاريخ',
-                            style: const TextStyle(
-                                color: Colors.black, fontSize: 25),
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: buildDateSelectionWidget(context, selectedDate,
+                        (DateTime? pickedDate) {
+                      setState(() {
+                        selectedDate = pickedDate;
+                      });
+                    }),
                   ),
                   ElevatedButton(
                     onPressed: () {

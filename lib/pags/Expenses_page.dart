@@ -1,6 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages, library_private_types_in_public_api, file_names, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:many/components/buildDateSelectionWidget.dart';
 
 import 'package:many/components/Custom_FloatingAction_Button.dart';
 import 'package:many/components/Transaction_List.dart';
@@ -93,37 +94,12 @@ class _ExpensesPageState extends State<ExpensesPage> {
                   buildChoiceChipList(),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child:InkWell(
-                      onTap: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: selectedDate ?? DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2101),
-                        );
-                        if (pickedDate != null && pickedDate != selectedDate) {
-                          setState(() {
-                            selectedDate = pickedDate;
-                          });
-                        }
-                      },
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.date_range_sharp,
-                            color: Colors.black,
-                            size: 45,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            selectedDate != null
-                                ? 'تم اختيار التاريخ: ${selectedDate!.toLocal()}'
-                                : 'اختر التاريخ',
-                            style: const TextStyle(color: Colors.black, fontSize: 25),
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: buildDateSelectionWidget(context, selectedDate,
+                        (DateTime? pickedDate) {
+                      setState(() {
+                        selectedDate = pickedDate;
+                      });
+                    }),
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -215,6 +191,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
     );
     prefs.setDouble('expensesTotal', expensesTotal);
   }
+
   Future<void> _editTransaction(int index) async {
     Transaction editedTransaction = await Navigator.push(
       context,
@@ -230,7 +207,8 @@ class _ExpensesPageState extends State<ExpensesPage> {
       expensesTotal = getTotalAmountOfExpenses(_transactions);
       widget.updateExpensesTotal(expensesTotal);
     });
-    }
+  }
+
   Future<void> _loadTransactions() async {
     final prefs = await SharedPreferences.getInstance();
     final transactionsData = prefs.getStringList('expenses_transactions');
