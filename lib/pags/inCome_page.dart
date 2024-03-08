@@ -1,6 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages, library_private_types_in_public_api, file_names
 import 'dart:convert' show json;
 import 'package:flutter/material.dart';
+import 'package:many/components/AppBarText.dart';
 import 'package:many/components/buildDateSelectionWidget.dart';
 import 'package:many/components/Transaction_List.dart';
 import 'package:many/components/build_Text_Field.dart';
@@ -74,7 +75,7 @@ class _IncomePageState extends State<IncomePage> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: const Color(0xff48c659),
-        title: const Text('الدخل'),
+        title: const AppBarText(text: 'الدخل',),
       ),
       body: SingleChildScrollView(
         child: Column(

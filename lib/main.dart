@@ -9,7 +9,7 @@ class moneyApp88 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   return    MaterialApp(
+   return    const MaterialApp(
      debugShowCheckedModeBanner:false,
      home: homePage(),
 

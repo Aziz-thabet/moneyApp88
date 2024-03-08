@@ -1,6 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages, library_private_types_in_public_api, file_names, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:many/components/AppBarText.dart';
 import 'package:many/components/buildDateSelectionWidget.dart';
 
 import 'package:many/components/Custom_FloatingAction_Button.dart';
@@ -37,7 +38,8 @@ class _ExpensesPageState extends State<ExpensesPage> {
 
   void _addTransaction(String name, double amount, String type) async {
     setState(() {
-      _transactions.add(Transaction(
+      _transactions.add(
+          Transaction(
         name: name,
         amount: amount,
         date: selectedDate ?? DateTime.now(),
@@ -74,7 +76,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.purple,
-        title: const Text('المصروفات'),
+        title: const AppBarText(text: 'المصروفات'),
       ),
       body: SingleChildScrollView(
         child: Column(

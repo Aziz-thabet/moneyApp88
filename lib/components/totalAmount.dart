@@ -6,7 +6,7 @@ class TotalAmountWidget extends StatelessWidget {
   final double total;
   final Color color;
 
-  const TotalAmountWidget(this.total, {Key? key, required this.color}) : super(key: key);
+  const TotalAmountWidget(this.total, {super.key, required this.color});
 
   @override
   Widget build(BuildContext context) {

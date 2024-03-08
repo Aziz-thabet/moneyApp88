@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, depend_on_referenced_packages, file_names
 
 import 'package:flutter/material.dart';
+import 'package:many/components/AppBarText.dart';
 import 'package:many/components/buildDateSelectionWidget.dart';
 import 'package:many/components/Custom_FloatingAction_Button.dart';
 import 'package:many/components/Transaction_List.dart';
@@ -68,7 +69,7 @@ class _SavingsPageState extends State<SavingsPage> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: const Color(0xffff5500),
-        title: const Text('الادخار'),
+        title:const AppBarText(text: 'الادخار'),
       ),
       body: SingleChildScrollView(
         child: Column(
