@@ -1,9 +1,9 @@
-// ignore_for_file: library_private_types_in_public_api, depend_on_referenced_packages,
+// ignore_for_file: library_private_types_in_public_api, depend_on_referenced_packages,, file_names
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // استيراد حزمة لتنسيق التواريخ
-import 'package:many/components/build_Text_Field.dart';
-import 'package:many/models/TransactionModel.dart';
+import 'package:Money_manager/components/build_Text_Field.dart';
+import 'package:Money_manager/models/TransactionModel.dart';
 
 class EditTransactionPage extends StatefulWidget {
   final Transaction transaction;

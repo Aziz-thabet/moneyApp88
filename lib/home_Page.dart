@@ -1,8 +1,8 @@
 // ignore_for_file: file_names, camel_case_types
 import 'package:flutter/material.dart';
-import 'package:many/pags/Expenses_page.dart';
-import 'package:many/pags/Savings_page.dart';
-import 'package:many/pags/inCome_page.dart';
+import 'package:Money_manager/pags/Expenses_page.dart';
+import 'package:Money_manager/pags/Savings_page.dart';
+import 'package:Money_manager/pags/inCome_page.dart';
 import 'components/Category.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

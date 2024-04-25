@@ -11,8 +11,8 @@ class TotalAmountWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color:color ,
-      padding:  const EdgeInsets.only(left: 150),
+      color: color,
+      padding: const EdgeInsets.only(left: 150),
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Text(

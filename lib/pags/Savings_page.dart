@@ -1,14 +1,14 @@
 // ignore_for_file: library_private_types_in_public_api, depend_on_referenced_packages, file_names
 
+import 'package:Money_manager/components/FilterComponent.dart';
 import 'package:flutter/material.dart';
-import 'package:many/components/AppBarText.dart';
-import 'package:many/components/buildDateSelectionWidget.dart';
-import 'package:many/components/Custom_FloatingAction_Button.dart';
-import 'package:many/components/Transaction_List.dart';
-import 'package:many/components/build_Text_Field.dart';
-import 'package:many/components/totalAmount.dart';
-import 'package:many/models/TransactionModel.dart';
-import 'package:many/pags/EditTransactionPage.dart';
+import 'package:Money_manager/components/buildDateSelectionWidget.dart';
+import 'package:Money_manager/components/Transaction_List.dart';
+import 'package:Money_manager/components/build_Text_Field.dart';
+import 'package:Money_manager/components/totalAmount.dart';
+import 'package:Money_manager/models/TransactionModel.dart';
+import 'package:Money_manager/pags/EditTransactionPage.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert' show json;
 
@@ -20,12 +20,203 @@ class SavingsPage extends StatefulWidget {
 }
 
 class _SavingsPageState extends State<SavingsPage> {
+  // Define filter parameters
+  DateTime? startDate;
+  DateTime? endDate;
+  String filterName = '';
+  double? minAmount;
+  double? maxAmount;
+  List<String> transactionNames = [];
+  String selectedName = '';
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final List<Transaction> _transactions = [];
   final ScrollController _scrollController = ScrollController();
   double savingsTotal = 0.0;
   DateTime? selectedDate;
+  double originalIncomeTotal = 0.0;
+  double filteredIncomeTotal = 0.0;
+// Update name filter
+  void _handleNameSelected(String selectedName) {
+    setState(() {
+      filterName = selectedName;
+      // Update total income when name filter is applied
+      savingsTotal =
+          getTotalAmountOfSaving(_getFilteredTransactions(_transactions));
+      widget.updateSavingTotal(savingsTotal);
+    });
+  }
+
+
+  // Method to show filter modal
+  void _showFilterModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: const Text('Filter by Date'),
+              onTap: () {
+                _handleDateFilter(context);
+              },
+            ),
+            ListTile(
+              title: const Text('Filter by Name'),
+              onTap: () {
+                _handleNameFilter(context);
+              },
+            ),
+            ListTile(
+              title: const Text('Filter by Amount'),
+              onTap: () {
+                _handleAmountFilter(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _handleDateFilter(BuildContext context) async {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return FilterComponent(
+          onDateSelected: (startDate, endDate) async {
+            // Save the selected start and end dates to SharedPreferences
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            await prefs.setString(
+                'startDate', startDate?.toIso8601String() ?? '');
+            await prefs.setString('endDate', endDate?.toIso8601String() ?? '');
+            // Apply the date filter
+            setState(() {
+              this.startDate = startDate;
+              this.endDate = endDate;
+            });
+            Navigator.pop(context); // Close the modal after selecting dates
+          },
+          transactionNames: transactionNames,
+          onNameSelected: _handleNameSelected,
+        );
+      },
+    );
+  }
+
+  // Method to handle name filter
+  void _handleNameFilter(BuildContext context) {
+    String enteredName = ''; // Initialize variable to store entered name
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Filter by Name'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                decoration: const InputDecoration(labelText: 'Enter Name'),
+                onChanged: (value) {
+                  enteredName = value; // Update enteredName as user types
+                },
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    filterName =
+                        enteredName.trim(); // Apply entered name as filter
+                  });
+                  Navigator.of(context).pop(); // Close dialog
+                  // Update total income when name filter is applied
+                  savingsTotal = getTotalAmountOfSaving(
+                      _getFilteredTransactions(_transactions));
+                  widget.updateSavingTotal(savingsTotal);
+                },
+                child: const Text('Apply Filter'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // Method to handle amount filter
+  void _handleAmountFilter(BuildContext context) {
+    double? enteredMinAmount;
+    double? enteredMaxAmount;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Filter by Amount'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                decoration: const InputDecoration(labelText: 'Enter Min Amount'),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  enteredMinAmount = double.tryParse(value);
+                },
+              ),
+              TextField(
+                decoration:
+                const InputDecoration(labelText: 'Enter Max Amount'),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  enteredMaxAmount = double.tryParse(value);
+                },
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    minAmount = enteredMinAmount;
+                    maxAmount = enteredMaxAmount;
+                  });
+                  Navigator.of(context).pop(); // Close dialog
+                  // Update total income when amount filter is applied
+                  savingsTotal = getTotalAmountOfSaving(
+                      _getFilteredTransactions(_transactions));
+                  widget.updateSavingTotal(savingsTotal);
+                },
+                child: const Text('Apply Filter'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // Update date filter
+
+  List<Transaction> _getFilteredTransactions(List<Transaction> transactions) {
+    return transactions.where((transaction) {
+      // Filter by date
+      final dateInRange =
+          (startDate == null || transaction.date.isAfter(startDate!)) &&
+              (endDate == null || transaction.date.isBefore(endDate!));
+
+      // Filter by name
+      final nameMatches =
+          filterName.isEmpty || transaction.name.contains(filterName);
+      // Filter by amount
+      final amountInRange =
+          (minAmount == null || transaction.amount >= minAmount!) &&
+              (maxAmount == null || transaction.amount <= maxAmount!);
+
+      return dateInRange && nameMatches && amountInRange;
+    }).toList();
+  }
+
+
 
   @override
   void initState() {
@@ -40,6 +231,7 @@ class _SavingsPageState extends State<SavingsPage> {
         amount: amount,
         date: selectedDate ?? DateTime.now(),
       ));
+      transactionNames.add(name);
       _nameController.clear();
       _amountController.clear();
       _saveTransactions();
@@ -64,12 +256,19 @@ class _SavingsPageState extends State<SavingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final filteredTransactions = _getFilteredTransactions(_transactions);
     return Scaffold(
-      floatingActionButton: const CustomFloatingActionButton(),
+      // floatingActionButton: const CustomFloatingActionButton(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _showFilterModal(context); // Show filter modal when FAB is pressed
+        },
+        child: const Icon(Icons.filter_list),
+      ),
       appBar: AppBar(
         elevation: 0,
         backgroundColor: const Color(0xffff5500),
-        title:const AppBarText(text: 'الادخار'),
+        title:const Text( 'الادخار'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -79,6 +278,16 @@ class _SavingsPageState extends State<SavingsPage> {
               getTotalAmountOfSaving(_transactions),
               color: Colors.deepOrange.shade300,
             ),
+            if (startDate != null &&
+                endDate != null) // Display selected date range
+              Container(
+                padding: const EdgeInsets.all(8),
+                alignment: Alignment.center,
+                child: Text(
+                  'Filtered Date Range: ${DateFormat.yMMMd().format(startDate!)} - ${DateFormat.yMMMd().format(endDate!)}',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
             Container(
               padding: const EdgeInsets.all(15),
               child: Column(
@@ -116,7 +325,7 @@ class _SavingsPageState extends State<SavingsPage> {
               ),
             ),
             TransactionList(
-              _transactions,
+              filteredTransactions,
               scrollController: _scrollController,
               CircleAvatarColor: const Color(0xffff5500),
               onDelete: _deleteTransaction,
@@ -172,10 +381,14 @@ class _SavingsPageState extends State<SavingsPage> {
         );
       }).toList();
       setState(() {
-        _transactions.clear(); // يجب مسح القائمة قبل إضافة الصفقات المسترجعة
+        _transactions
+            .clear(); // Clear the list before adding retrieved transactions
         _transactions.addAll(transactions);
-        savingsTotal = getTotalAmountOfSaving(_transactions);
-        widget.updateSavingTotal(savingsTotal);
+        // Calculate original total income
+        originalIncomeTotal = getTotalAmountOfSaving(_transactions);
+        // Initialize filtered total income to original total income
+        filteredIncomeTotal = originalIncomeTotal;
+        widget.updateSavingTotal(filteredIncomeTotal);
       });
     }
   }
